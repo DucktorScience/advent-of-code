@@ -25,7 +25,22 @@ const processToZero = (originalLine: Readonly<Array<number>>) => {
     prevLine = nextLine;
   }
 
-  return output;
+  const reversed = output.toReversed();
+  const calculatedFirsts: Array<number> = [];
+  reversed.forEach((line, index) => {
+    if (index === 0) {
+      calculatedFirsts.push(0);
+    }
+
+    const priorFirst = _last(calculatedFirsts);
+    const myNewFirst = line[0] - priorFirst;
+
+    calculatedFirsts.push(myNewFirst);
+    return [myNewFirst, ...line];
+  });
+  calculatedFirsts.reverse();
+
+  return output.map((line, index) => [calculatedFirsts[index], ...line]);
 }
 
 const PROCESSED_DATA_SETS = RAW_DATA_SETS.map(processToZero);
@@ -50,5 +65,10 @@ const getLastExtrapolatedValue = (processedDataSet: Readonly<Array<Array<number>
   return _last(extrapolatedValues);
 }
 
-const summedExtrapolatedValues = _sum(PROCESSED_DATA_SETS.map(getLastExtrapolatedValue));
-console.log(summedExtrapolatedValues)
+const part1 = _sum(PROCESSED_DATA_SETS.map(getLastExtrapolatedValue));
+const part2 = _sum(PROCESSED_DATA_SETS.map(dataSet => dataSet[0][0]));
+
+console.log({
+  part1,
+  part2,
+});
