@@ -1,2 +1,3 @@
-export { isDigit } from './isDigit';
+export * from './isDigit';
 export * from './sortNumber';
+export * from './sum'
