@@ -1,4 +1,4 @@
-import { update } from "lodash";
+import { getMiddleValue } from "utilities/array";
 import { INPUT } from "./input"
 import { sumArray } from "utilities/number";
 
@@ -9,8 +9,10 @@ type Rule = {
   mustComeBefore: number;
 }
 
+type Update = ReadonlyArray<number>;
+
 const rules: Array<Rule> = [];
-const updates: Array<Array<number>> = [];
+const updates: Array<Update> = [];
 
 lines.forEach(line => {
   if (line === '') {
@@ -28,12 +30,14 @@ lines.forEach(line => {
   }
 });
 
-const isCorrect = (update: ReadonlyArray<number>) => {
+const ruleAppliesToUpdate = (rule: Rule, update: Update) => update.includes(rule.mustComeBefore) && update.includes(rule.pageId);
+
+const isCorrect = (update: Update) => {
   const printedPages = new Set<number>();
 
   return update.every(page => {
     const mustComeBefore = rules
-      .filter(rule => update.includes(rule.mustComeBefore) && update.includes(rule.pageId))
+      .filter(rule => ruleAppliesToUpdate(rule, update))
       .filter(rule => rule.pageId === page)
       .map(rule => rule.mustComeBefore);
 
@@ -50,13 +54,49 @@ const isCorrect = (update: ReadonlyArray<number>) => {
   })
 }
 
-const middles = updates.map(update => {
-  if (isCorrect(update)) {
-    const middleIndex = Math.floor(update.length / 2);
-    return update[middleIndex];
-  }
+const correctUpdates: Array<Update> = [];
+const incorrectUpdates: Array<Update> = [];
 
-  return 0;
+updates.forEach(update => {
+  if (isCorrect(update)) {
+    correctUpdates.push(update);
+  } else {
+    incorrectUpdates.push(update);
+  }
 })
 
-console.log({ part1: sumArray(middles) });
+const correctMiddles = correctUpdates.map(getMiddleValue);
+
+console.log({ part1: sumArray(correctMiddles) });
+
+const repairUpdate = (update: Update): Update => {
+  let output: number[] = [];
+  const rulesForUpdate = rules.filter(rule => ruleAppliesToUpdate(rule, update));
+
+  while (output.length !== update.length) {
+
+    const pageToPrint = update.find(page => {
+      // Printed pages can be skipped
+      if (output.includes(page)) {
+        return false;
+      }
+
+      const rulesForPage = rulesForUpdate.filter(rule => rule.pageId === page);
+      return rulesForPage.every(rule => {
+        return output.includes(rule.mustComeBefore);
+      });
+    });
+
+    output.unshift(pageToPrint);
+  }
+
+  return output;
+}
+
+console.log(repairUpdate([75, 97, 47, 61, 53]))
+console.log(repairUpdate([61, 13, 29]))
+console.log(repairUpdate([97, 13, 75, 29, 47]))
+
+const repaired = incorrectUpdates.map(repairUpdate);
+const repairedMiddles = repaired.map(getMiddleValue);
+console.log({ part2: sumArray(repairedMiddles) })
