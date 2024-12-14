@@ -1,3 +1,4 @@
+import { times } from "lodash";
 import { Point } from "utilities/space";
 
 /**
@@ -5,9 +6,25 @@ import { Point } from "utilities/space";
  */
 export class CharacterGrid {
   private cells: string[][];
+  private readonly fallbackCharacter: string;
 
-  constructor(input: Readonly<Array<string>>, private readonly fallbackCharacter = '.') {
-    this.cells = input.map(line => line.split(''));
+  constructor(input: Readonly<Array<string>>, fallbackCharacter?: string);
+  constructor(width: number, height: number, fillCharacter?: string, fallbackCharacter?: string);
+
+  constructor(inputOrWidth: Readonly<Array<string>> | number, fallbackOrHeight?: string | number, constructorArgC?: string, constructorArgD?: string) {
+    if (Array.isArray(inputOrWidth)) {
+      this.cells = inputOrWidth.map(line => line.split(''));
+      if (typeof fallbackOrHeight === 'number') {
+        throw new Error(`unexpected route in constructor, expected fallback character to be a string, it is: ${fallbackOrHeight}`);
+      }
+      this.fallbackCharacter = fallbackOrHeight ?? '.';
+    } else {
+      const width = inputOrWidth as number;
+      const height = fallbackOrHeight as number;
+      const fillCharacter = constructorArgC ?? '.';
+      this.fallbackCharacter = constructorArgD ?? '.';
+      this.cells = times(height).map(() => times(width).map(() => fillCharacter));
+    }
   }
 
   getValue(x: number, y: number) {
