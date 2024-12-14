@@ -1,6 +1,8 @@
 import { Point, pointsEqual } from "utilities/space";
 import { INPUT } from "./input"
 import { assert } from "console";
+import { CharacterGrid } from "utilities/grid";
+import { times } from "lodash";
 
 const lines = INPUT.split('\n');
 
@@ -95,4 +97,41 @@ positions.forEach(({ position }) => {
   }
 })
 
-console.log(`Part 1: ${northEastCount * northWestCount * southEastCount * southWestCount}`)
+console.log(`Part 1: ${northEastCount * northWestCount * southEastCount * southWestCount}`);
+
+const isChristmasTree = (points: ReadonlyArray<Point>) => {
+  for (const point of points) {
+    const hasPointBelow = points.some(p => p.x === point.x && p.y === point.y + 1);
+    if (hasPointBelow) {
+      if (times(7).every(n => {
+        return points.some(p => p.x === point.x && p.y === point.y + n + 2);
+      })) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+let christmasTicks = 0;
+positions = originalRobots;
+
+const printWorld = (robots: ReadonlyArray<Robot>) => {
+  const grid = new CharacterGrid(GRID_WIDTH, GRID_HEIGHT, ' ');
+
+  robots.forEach(robot => {
+    grid.setValue(robot.position.x, robot.position.y, '*');
+  })
+
+  console.log(grid.toString());
+}
+
+do {
+  ++christmasTicks;
+  positions = doTick(positions, GRID_WIDTH, GRID_HEIGHT);
+} while (!isChristmasTree(positions.map(p => p.position)))
+
+printWorld(positions)
+
+console.log(`Part 2: ${christmasTicks}`)
