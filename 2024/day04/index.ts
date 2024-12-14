@@ -62,26 +62,48 @@ const isMAS = (x: number, y: number, xDirection: number, yDirection: number) => 
 
 grid.forEach((value, x, y) => {
   if (value === 'X') {
-    // Lef to right
-    totalXmas += isMAS(x, y, 1, 0) ? 1 : 0;
-    // Right to left
-    totalXmas += isMAS(x, y, -1, 0) ? 1 : 0;
+    totalXmas += [
+      // Lef to right
+      isMAS(x, y, 1, 0),
+      // Right to left
+      isMAS(x, y, -1, 0),
 
-    // Top to bottom
-    totalXmas += isMAS(x, y, 0, 1) ? 1 : 0;
-    // Bottom to top
-    totalXmas += isMAS(x, y, 0, -1) ? 1 : 0;
+      // Top to bottom
+      isMAS(x, y, 0, 1),
+      // Bottom to top
+      isMAS(x, y, 0, -1),
 
-    // Right and downwards
-    totalXmas += isMAS(x, y, 1, 1) ? 1 : 0;
-    // Right and upwards
-    totalXmas += isMAS(x, y, 1, -1) ? 1 : 0;
+      // Right and downwards
+      isMAS(x, y, 1, 1),
+      // Right and upwards
+      isMAS(x, y, 1, -1),
 
-    // Left and downwards
-    totalXmas += isMAS(x, y, -1, 1) ? 1 : 0;
-    // Left and upwards
-    totalXmas += isMAS(x, y, -1, -1) ? 1 : 0;
+      // Left and downwards
+      isMAS(x, y, -1, 1),
+      // Left and upwards
+      isMAS(x, y, -1, -1),
+    ].filter(Boolean).length;
   }
 })
 
 console.log({ part1: totalXmas });
+
+let totalMas = 0;
+
+grid.forEach((value, x, y) => {
+  if (value === 'A') {
+    const NE = grid.getValue(x + 1, y - 1);
+    const SW = grid.getValue(x - 1, y + 1);
+
+    if ((NE === 'M' && SW === 'S') || (SW === 'M' && NE === 'S')) {
+      const SE = grid.getValue(x + 1, y + 1);
+      const NW = grid.getValue(x - 1, y - 1);
+
+      if ((NW === 'M' && SE === 'S') || (SE === 'M' && NW === 'S')) {
+        totalMas++;
+      }
+    }
+  }
+});
+
+console.log({ part2: totalMas });
