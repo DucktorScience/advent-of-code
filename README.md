@@ -1,8 +1,8 @@
 # advent-of-code
 
 # Install
-npm install -g ts-node
-npm install -g typescript
+npm install -g ts-node typescript
+yarn install --frozen-lockfile
 
 # Run
-ts-node 2019/day01/index.ts
+ts-node 2024/day01/index.ts
