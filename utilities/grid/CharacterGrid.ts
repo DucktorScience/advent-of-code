@@ -14,8 +14,20 @@ export class CharacterGrid {
     return this.cells[y]?.[x] ?? this.fallbackCharacter;
   }
 
+  setValue(x: number, y: number, value: string) {
+    if (y >= 0 && x >= 0 && y < this.cells.length && x < this.cells[y].length) {
+      this.cells[y][x] = value;
+    } else {
+      throw new Error('Out of bounds')
+    }
+  }
+
   getLines() {
-    return this.cells.map(line => line.join('')).join('\n');
+    return this.cells.map(line => line.join(''));
+  }
+
+  toString() {
+    return this.getLines().join('\n');
   }
 
   map(callbackfn: (value: string) => string) {
@@ -52,5 +64,9 @@ export class CharacterGrid {
     }
 
     return null;
+  }
+
+  clone(): CharacterGrid {
+    return new CharacterGrid(this.getLines(), this.fallbackCharacter)
   }
 }
