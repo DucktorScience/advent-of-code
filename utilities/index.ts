@@ -1,3 +1,4 @@
+export * from './array';
 export * from './grid';
 export * from './number';
 export * from './space';
