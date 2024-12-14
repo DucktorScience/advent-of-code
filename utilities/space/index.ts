@@ -1,3 +1,4 @@
+export * from './pointsEqual';
 export * from './PointSet';
 export * from "./findTallestY";
 export * from "./isInPoints";
