@@ -1,3 +1,8 @@
+import { Point } from "utilities/space";
+
+/**
+ * top-left-origin
+ */
 export class CharacterGrid {
   private cells: string[][];
 
@@ -33,5 +38,19 @@ export class CharacterGrid {
         callbackfn(character, x, y);
       })
     })
+  }
+
+  find(character: string): Point | null {
+    for (let y = 0; y < this.cells.length; ++y) {
+      const row = this.cells[y];
+
+      for (let x = 0; x < row.length; ++x) {
+        if (row[x] === character) {
+          return { x, y };
+        }
+      }
+    }
+
+    return null;
   }
 }
