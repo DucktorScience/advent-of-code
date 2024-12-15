@@ -1,3 +1,4 @@
+export * from './arrowToDirection';
 export * from './pointsEqual';
 export * from './PointSet';
 export * from "./findTallestY";
