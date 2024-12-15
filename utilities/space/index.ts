@@ -1,5 +1,6 @@
 export * from './arrowToDirection';
 export * from './isHorizontalDirection';
+export * from './movePoint';
 export * from './pointsEqual';
 export * from './PointSet';
 export * from "./findTallestY";
