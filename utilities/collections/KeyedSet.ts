@@ -30,4 +30,11 @@ export class KeyedSet<T> {
   get size(): number {
     return this.data.size;
   }
+
+  /**
+   * Returns an iterable of values in the set.
+   */
+  values(): SetIterator<T> {
+    return this.data.values();
+  }
 }
