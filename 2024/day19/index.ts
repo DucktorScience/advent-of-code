@@ -1,28 +1,42 @@
+import { sumArray } from "utilities/number";
 import { INPUT } from "./input"
 
 const [rawStock, _, ...patterns] = INPUT.split('\n');
 const stock = rawStock.split(', ');
 
-const patternCanBeMade = (pattern: string) => {
-  for (const towel of stock) {
+let cache: Record<string, number | null> = {};
+
+const patternCanBeMade = ((pattern: string) => {
+  const plausibleStock = stock.filter(s => pattern.includes(s));
+
+  if (cache[pattern] !== undefined) {
+    return cache[pattern];
+  }
+
+  let workingParts: number = 0;
+
+  for (const towel of plausibleStock) {
     if (pattern.startsWith(towel)) {
       const remainingPattern = pattern.substring(towel.length);
 
       if (remainingPattern.length === 0) {
-        // That was the end of the input
-        return true;
+        workingParts++;
       }
 
-      if (patternCanBeMade(remainingPattern)) {
-        // The remaining pattern can be made all the way to the end!
-        return true;
+      const restOfTheParts = patternCanBeMade(remainingPattern);
+      if (restOfTheParts) {
+        workingParts += restOfTheParts;
       }
     }
   }
 
-  return false;
-}
+  cache[pattern] = workingParts;
+  return workingParts;
+})
 
-const validPatterns = patterns.filter(patternCanBeMade);
+const validPatterns = patterns.map((pattern) => {
+  cache = {};
+  return patternCanBeMade(pattern);
+}).filter(Boolean);
 
-console.log({ part1: validPatterns.length })
+console.log({ part1: validPatterns.length, part2: sumArray(validPatterns) });
