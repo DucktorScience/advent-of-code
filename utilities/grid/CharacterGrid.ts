@@ -47,8 +47,8 @@ export class CharacterGrid {
     return this.getLines().join('\n');
   }
 
-  map(callbackfn: (value: string) => string) {
-    this.cells = this.cells.map(line => line.map(callbackfn))
+  map(callbackfn: (value: string, x: number, y: number) => string) {
+    this.cells = this.cells.map((line, y) => line.map((value, x) => callbackfn(value, x, y)));
   }
 
   filter(callbackfn: (value: string) => boolean) {
